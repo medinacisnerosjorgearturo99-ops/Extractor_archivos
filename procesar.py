@@ -1,42 +1,70 @@
-import os
-
-archivo_entrada = 'Estados.txt'
-archivo_salida = 'resultado.txt'
+import csv
 
 def procesar_datos():
-    print("Iniciando procesamiento de datos...")
-    
-    # Validar que el archivo de entrada exista
-    if not os.path.exists(archivo_entrada):
-        print(f"Error: El archivo {archivo_entrada} no se encontró.")
-        return
+    total_estados = 0
+    suma_temp = 0
+    suma_humedad = 0
+    max_costo = -1
+    min_costo = float('inf')
+    estado_max_costo = ""
+    estado_min_costo = ""
 
     try:
-        with open(archivo_entrada, 'r', encoding='utf-8') as f:
-            lineas = f.readlines()
-        
-        resultados = ["=== REPORTE DE ESTADOS DEL SISTEMA ===\n\n"]
-        estados_activos = 0
-        
-        for linea in lineas:
-            # Separar por comas
-            datos = linea.strip().split(',')
-            if len(datos) == 3:
-                estado, estatus, poblacion = [d.strip() for d in datos]
-                resultados.append(f"-> {estado.upper()}:\n   Estatus: {estatus} | Población: {poblacion}\n")
-                if estatus.lower() == 'activo':
-                    estados_activos += 1
-        
-        resultados.append(f"\nResumen: {estados_activos} estados se encuentran Activos.")
-        
-        # Generar el archivo resultado.txt
-        with open(archivo_salida, 'w', encoding='utf-8') as f:
-            f.writelines(resultados)
-            
-        print(f"¡Éxito! Archivo '{archivo_salida}' generado correctamente.")
-        
-    except Exception as e:
-        print(f"Error durante el procesamiento: {e}")
+        # Abrimos el archivo de texto simulando que es un CSV
+        with open('Estados.txt', mode='r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            headers = next(reader, None) # Nos saltamos la primera línea (los encabezados)
 
-if __name__ == "__main__":
+            for row in reader:
+                # Verificamos que la fila tenga las 7 columnas completas
+                if len(row) >= 7:
+                    estado = row[0].strip()
+                    temp = float(row[1])
+                    humedad = float(row[2])
+                    costo_alojamiento = float(row[3])
+
+                    total_estados += 1
+                    suma_temp += temp
+                    suma_humedad += humedad
+
+                    # Calculamos el costo más alto
+                    if costo_alojamiento > max_costo:
+                        max_costo = costo_alojamiento
+                        estado_max_costo = estado
+
+                    # Calculamos el costo más bajo
+                    if costo_alojamiento < min_costo:
+                        min_costo = costo_alojamiento
+                        estado_min_costo = estado
+
+        # Preparamos el reporte final
+        if total_estados > 0:
+            promedio_temp = suma_temp / total_estados
+            promedio_humedad = suma_humedad / total_estados
+
+            reporte = (
+                f"=== REPORTE DE INDICADORES POR ESTADO ===\n"
+                f"Total de registros analizados: {total_estados}\n"
+                f"Temperatura promedio nacional: {promedio_temp:.1f}°C\n"
+                f"Humedad promedio nacional: {promedio_humedad:.1f}%\n"
+                f"Estado con alojamiento más caro: {estado_max_costo} (${max_costo:,.2f})\n"
+                f"Estado con alojamiento más accesible: {estado_min_costo} (${min_costo:,.2f})\n"
+                f"=========================================\n"
+            )
+        else:
+            reporte = "Error: No se encontraron datos válidos para procesar."
+
+        # Guardamos el resultado
+        with open('resultado.txt', mode='w', encoding='utf-8') as out_file:
+            out_file.write(reporte)
+
+        print("¡Éxito! Archivo 'resultado.txt' generado con el nuevo formato.")
+
+    except FileNotFoundError:
+        print("Error: No se encontró el archivo 'Estados.txt'.")
+    except Exception as e:
+        print(f"Ocurrió un error al procesar los datos: {e}")
+
+if __name__ == '__main__':
+    print("Iniciando procesamiento de datos...")
     procesar_datos()
