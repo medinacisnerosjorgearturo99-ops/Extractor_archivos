@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
-        // Cambiar el icono de luna a sol
+        // Cambiar el icono
         if (document.body.classList.contains('dark-mode')) {
             icon.classList.remove('fa-moon');
             icon.classList.add('fa-sun');
@@ -19,11 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarResultadoPipeline();
 });
 
-// Esta función busca el archivo "resultado.txt" en la misma carpeta
+// Busca el archivo "resultado.txt" en tu servidor EC2
 async function cargarResultadoPipeline() {
     const container = document.getElementById('resultado-pipeline-container');
     try {
-        const response = await fetch('resultado.txt');
+        // Apunta directamente a la IP de tu EC2
+        const response = await fetch('http://52.14.218.34/resultado.txt');
         if (!response.ok) throw new Error('Archivo no encontrado');
         const text = await response.text();
         container.textContent = text;

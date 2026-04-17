@@ -7,21 +7,24 @@ phases:
       
   build:
     commands:
-      - echo "Fase de Build ejecutando script..."
-      - python procesar.py
-      - bash -c "if [ -f resultado.txt ]; then echo 'Exito, resultado.txt existe'; else echo 'Error' && exit 1; fi"
+      - echo "Fase de Build iniciada..."
       
   post_build:
     commands:
-      - echo "Subiendo a S3..."
+      - echo "Subiendo archivos web al bucket S3..."
       - aws s3 cp index.html s3://$S3_BUCKET/
       - aws s3 cp css/ s3://$S3_BUCKET/css/ --recursive
       - aws s3 cp js/ s3://$S3_BUCKET/js/ --recursive
-      - aws s3 cp resultado.txt s3://$S3_BUCKET/
+      
       - echo "Configurando llave SSH..."
       - mkdir -p ~/.ssh
-      - echo "$SSH_KEY" > ~/.ssh/id_rsa
+      # OJO: Asegúrate de que el nombre del .pem coincida con el que subiste a S3
+      - aws s3 cp s3://$S3_BUCKET/Extractor.pem ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
-      - echo "Desplegando en EC2..."
-      - scp -o StrictHostKeyChecking=no -r ./* ubuntu@$52.14.218.34:/home/ubuntu/
-      - ssh -o StrictHostKeyChecking=no ubuntu@$52.14.218.34 "sudo apt-get update && sudo apt-get install -y docker.io && sudo docker build -t app-actividad4 /home/ubuntu/ && sudo docker stop mi-app || true && sudo docker rm mi-app || true && sudo docker run -d -p 80:80 --name mi-app app-actividad4"
+      
+      - echo "Desplegando archivos en EC2..."
+      - scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./* ubuntu@52.14.218.34:/home/ubuntu/
+      
+      - echo "Ejecutando script y Docker en la instancia EC2..."
+      # Entramos a la EC2, ejecutamos el script de Python, y levantamos Docker
+      - ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@52.14.218.34 "cd /home/ubuntu/ && python3 procesar.py && sudo apt-get update && sudo apt-get install -y docker.io && sudo docker build -t app-actividad4 . && sudo docker stop mi-app || true && sudo docker rm mi-app || true && sudo docker run -d -p 80:80 --name mi-app app-actividad4"
