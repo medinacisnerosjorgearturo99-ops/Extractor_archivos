@@ -23,5 +23,5 @@ phases:
       - echo "$SSH_KEY" > ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
       - echo "Desplegando en EC2..."
-      - scp -o StrictHostKeyChecking=no -r ./* ubuntu@$52.14.218.34:/home/ubuntu/
-      - ssh -o StrictHostKeyChecking=no ubuntu@$52.14.218.34 "sudo apt-get update && sudo apt-get install -y docker.io && sudo docker build -t app-actividad4 /home/ubuntu/ && sudo docker stop mi-app || true && sudo docker rm mi-app || true && sudo docker run -d -p 80:80 --name mi-app app-actividad4"
+      - scp -o StrictHostKeyChecking=no -r ./* ubuntu@52.14.218.34:/home/ubuntu/
+      - ssh -o StrictHostKeyChecking=no ubuntu@52.14.218.34 "sudo apt-get update && sudo apt-get install -y docker.io && sudo docker build -t app-actividad4 /home/ubuntu/ && sudo docker stop mi-app || true && sudo docker rm mi-app || true && sudo docker run -d -p 80:80 --name mi-app app-actividad4"
