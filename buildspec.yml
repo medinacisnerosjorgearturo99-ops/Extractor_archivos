@@ -4,39 +4,24 @@ phases:
   install:
     runtime-versions:
       python: 3.9
-  
+      
   build:
     commands:
-      - echo "Fase de Build: Ejecutando el script de Python..."
+      - echo "Fase de Build ejecutando script..."
       - python procesar.py
-      - echo "Fase de Build: Validando que resultado.txt fue generado..."
-      - |
-        if [ -f resultado.txt ]; then
-          echo "Validación exitosa: resultado.txt existe.";
-        else
-          echo "Error: resultado.txt no fue generado." && exit 1;
-        fi
-
+      - bash -c "if [ -f resultado.txt ]; then echo 'Exito, resultado.txt existe'; else echo 'Error' && exit 1; fi"
+      
   post_build:
     commands:
-      - echo "Fase de Deploy iniciada..."
-      
-      # 1. Publicar la página en un bucket S3
-      - echo "Subiendo archivos web a S3..."
-      - aws s3 cp index.html s3://tu-bucket-s3-aqui/
-      - aws s3 cp css/ s3://tu-bucket-s3-aqui/css/ --recursive
-      - aws s3 cp js/ s3://tu-bucket-s3-aqui/js/ --recursive
-      - aws s3 cp resultado.txt s3://tu-bucket-s3-aqui/ # Para que el S3 también tenga el txt
-      
-      # 2 y 3. Copiar archivos a EC2 y ejecutar (Usando Docker)
-      # Nota: Requiere que configures Parameter Store en AWS con tu llave SSH (SSH_KEY)
-      - echo "Conectando a EC2 para desplegar Docker..."
+      - echo "Subiendo a S3..."
+      - aws s3 cp index.html s3://$S3_BUCKET/
+      - aws s3 cp css/ s3://$S3_BUCKET/css/ --recursive
+      - aws s3 cp js/ s3://$S3_BUCKET/js/ --recursive
+      - aws s3 cp resultado.txt s3://$S3_BUCKET/
+      - echo "Configurando llave SSH..."
       - mkdir -p ~/.ssh
       - echo "$SSH_KEY" > ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
-      # Copiamos todo el proyecto a la EC2
-      - scp -o StrictHostKeyChecking=no -r ./* ec2-user@<IP_DE_TU_EC2>:/home/ec2-user/actividad4/
-      # Nos conectamos por SSH para construir y correr el contenedor
-      - ssh -o StrictHostKeyChecking=no ec2-user@<IP_DE_TU_EC2> "cd /home/ec2-user/actividad4/ && docker build -t app-actividad4 . && docker stop mi-app || true && docker rm mi-app || true && docker run -d -p 80:80 --name mi-app app-actividad4"
-      
-      - echo "¡Pipeline ejecutado con éxito!"
+      - echo "Desplegando en EC2..."
+      - scp -o StrictHostKeyChecking=no -r ./* ubuntu@$EC2_IP:/home/ubuntu/
+      - ssh -o StrictHostKeyChecking=no ubuntu@$EC2_IP "sudo apt-get update && sudo apt-get install -y docker.io && sudo docker build -t app-actividad4 /home/ubuntu/ && sudo docker stop mi-app || true && sudo docker rm mi-app || true && sudo docker run -d -p 80:80 --name mi-app app-actividad4"
