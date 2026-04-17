@@ -1,0 +1,4 @@
+Jalisco, Activo, 8348151
+Nuevo Leon, Activo, 5784442
+Ciudad de Mexico, Inactivo, 9209944
+Yucatan, Activo, 2320898

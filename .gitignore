@@ -1,0 +1,11 @@
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar el resultado generado localmente (para que el pipeline genere el suyo propio en AWS)
+resultado.txt
