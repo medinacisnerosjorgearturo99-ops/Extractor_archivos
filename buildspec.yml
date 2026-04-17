@@ -20,7 +20,7 @@ phases:
       - aws s3 cp resultado.txt s3://$S3_BUCKET/
       - echo "Configurando llave SSH..."
       - mkdir -p ~/.ssh
-      - aws s3 cp s3://$S3_BUCKET/vockey.pem ~/.ssh/id_rsa
+      - aws s3 cp s3://$S3_BUCKET/Extractor.pem ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
       - echo "Desplegando en EC2..."
       - scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./* ubuntu@52.14.218.34:/home/ubuntu/
