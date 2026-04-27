@@ -1,5 +1,5 @@
 // Asegúrate de poner la IP correcta de tu EC2 aquí
-const API_URL = 'http://52.14.218.34/api'; 
+const API_URL = 'http://3.139.58.49/api'; 
 let currentFileName = ""; // Guarda el nombre del archivo cargado actualmente
 
 async function fetchDatabaseFiles() {
