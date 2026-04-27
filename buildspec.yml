@@ -28,3 +28,7 @@ phases:
       - echo "Ejecutando script y Docker en la instancia EC2..."
       # Entramos a la EC2, ejecutamos el script de Python, y levantamos Docker
       - ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@3.139.58.49 "cd /home/ubuntu/ && python3 procesar.py && sudo apt-get update && sudo apt-get install -y docker.io && sudo docker build -t app-actividad4 . && sudo docker stop mi-app || true && sudo docker rm mi-app || true && sudo docker run -d -p 80:80 --name mi-app app-actividad4"
+    
+artifacts:
+  files:
+    - '**/*'
