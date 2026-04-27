@@ -4,8 +4,9 @@ WORKDIR /app
 
 COPY . /app/
 
-# Exponemos el puerto para la web
+# Instalamos las dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
 EXPOSE 80
 
-# Levantamos el servidor con los permisos de CORS
 CMD ["python", "server.py"]

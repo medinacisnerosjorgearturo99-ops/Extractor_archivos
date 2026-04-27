@@ -15,21 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Cargar el archivo generado por el pipeline
-    cargarResultadoPipeline();
-});
-
-// Busca el archivo "resultado.txt" en tu servidor EC2
-async function cargarResultadoPipeline() {
-    const container = document.getElementById('resultado-pipeline-container');
-    try {
-        // Apunta directamente a la IP de tu EC2
-        const response = await fetch('http://52.14.218.34/resultado.txt');
-        if (!response.ok) throw new Error('Archivo no encontrado');
-        const text = await response.text();
-        container.textContent = text;
-    } catch (error) {
-        container.textContent = "Esperando la ejecución del script en EC2 para generar 'resultado.txt'...";
-        container.style.color = "var(--text-muted)";
+    // Inicializamos la lista de archivos desde la base de datos (DynamoDB)
+    // Esta función vive en js/apiManager.js
+    if (typeof fetchDatabaseFiles === 'function') {
+        fetchDatabaseFiles();
+    } else {
+        console.warn("Advertencia: apiManager.js no se ha cargado correctamente.");
     }
-}
+});

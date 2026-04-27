@@ -12,6 +12,15 @@ fileInput.addEventListener('change', function(e) {
         const content = event.target.result;
         const extension = file.name.split('.').pop().toLowerCase();
 
+        // --- NUEVAS LÍNEAS PARA LA INTEGRACIÓN CON BD ---
+        // Asignamos el nombre a la variable global que usa apiManager.js
+        currentFileName = file.name; 
+        
+        // Habilitamos el botón de guardar
+        const saveDbBtn = document.getElementById('btn-save-db');
+        if (saveDbBtn) saveDbBtn.disabled = false;
+        // ------------------------------------------------
+
         if (extension === 'csv') {
             Papa.parse(content, {
                 header: true,

@@ -209,3 +209,39 @@ tbody tr:hover {
     color: var(--text-muted);
     font-style: italic;
 }
+
+/* Ajustes de contraste para inputs y selectores (Modo Claro) */
+.search-box input, .form-select {
+    color: #1a202c !important; 
+    background-color: #ffffff;
+    border: 1px solid #cbd5e0;
+}
+.search-box input::placeholder {
+    color: #4a5568;
+    opacity: 0.8;
+}
+
+/* Modo Oscuro para inputs */
+body.dark-mode .search-box input, 
+body.dark-mode .form-select {
+    color: #f7fafc !important;
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+body.dark-mode .search-box input::placeholder {
+    color: #a0aec0;
+}
+
+/* Estilo para el nuevo selector de base de datos */
+.form-select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    cursor: pointer;
+}
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
